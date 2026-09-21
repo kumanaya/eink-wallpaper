@@ -1,0 +1,32 @@
+# Copy to /mnt/us/documents/eink-wallpaper/unsplash.conf.
+# The script sources this file as POSIX sh; quote values containing &, ?, or spaces.
+
+# Official Unsplash API key. With this set, order_by=popular is used.
+# Leave empty for the public, keyless editorial feed.
+UNSPLASH_ACCESS_KEY=
+
+# Seconds per image. The requested default is one minute.
+INTERVAL=60
+
+# Kindle 4 and most 600x800 panels use this size.
+PANEL=600x800
+
+# Number of photos fetched per feed cycle.
+PER_PAGE=30
+
+# Maximum number of recently shown images kept on /mnt/us.
+KEEP=40
+
+# Image URL parameters sent to images.unsplash.com.
+# fbink's image build handles JPEG and PNG; JPEG uses less Wi-Fi traffic.
+IMAGE_PARAMS='fit=crop&crop=entropy&fm=jpg&q=75&sat=-100&con=10'
+
+# Extra comma-separated options inside fbink's file= argument.
+# Add ,dither if the panel shows visible grey banding.
+FBINK_IMAGE_ARGS='halign=CENTER,valign=CENTER'
+
+# Optional diagnostics/test controls.
+# MAX_RUN=0
+# ERROR_WAIT=120
+# TOUCH_DEV=/dev/input/event1
+# UNSPLASH_FEED_URL='https://example.invalid/photos.json'

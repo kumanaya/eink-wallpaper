@@ -1,0 +1,10 @@
+# Device-local key and runtime state
+unsplash.conf
+cache/
+/feed.json
+/feed.txt
+*.log
+.tapped
+
+# Local test output
+out/
