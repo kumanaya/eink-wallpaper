@@ -53,21 +53,29 @@ if the device's FBInk build is known to prefer PNG.
 
 ## Unsplash feed
 
-Without a key, the script uses Unsplash's public editorial JSON endpoint. This
-is the zero-setup path and is best-effort because it is not the documented API
+The default query is:
+
+```text
+nature animals abstract
+```
+
+The script URL-encodes that query and searches for images matching those
+themes. Set `UNSPLASH_QUERY` in `unsplash.conf` to customize it.
+
+Without a key, the script uses Unsplash's public search JSON endpoint. This is
+the zero-setup path and is best-effort because it is not the documented API
 contract.
 
-For the documented API and actual popular ordering, put a free Unsplash API
-key in `unsplash.conf`:
+For the documented API, put a free Unsplash API key in `unsplash.conf`:
 
 ```sh
 UNSPLASH_ACCESS_KEY=your-client-id
 ```
 
-The script then requests:
+The keyed path requests:
 
 ```text
-https://api.unsplash.com/photos?order_by=popular&per_page=30
+https://api.unsplash.com/search/photos?query=nature%20animals%20abstract&per_page=30
 ```
 
 `UNSPLASH_FEED_URL` can override either feed with a JSON endpoint that returns
@@ -96,6 +104,7 @@ The default cache is limited to 40 recently shown images.
 | `INTERVAL` | `60` | Seconds each image remains visible. `0` is useful for smoke tests. |
 | `PANEL` | `600x800` | Width and height requested from Unsplash. |
 | `PER_PAGE` | `30` | Photos fetched per feed cycle. |
+| `UNSPLASH_QUERY` | `nature animals abstract` | Search terms used for the wallpaper feed. |
 | `KEEP` | `40` | Maximum cached image files. |
 | `IMAGE_PARAMS` | grayscale JPEG | Imgix crop, format and quality parameters. |
 | `FBINK_IMAGE_ARGS` | centered | Extra FBInk image options; add `,dither` for banding. |

@@ -18,15 +18,15 @@
 # cycle (PER_PAGE photos), each photo is rendered once at the panel size and
 # then reused from the cache. With the Wi-Fi off the panel keeps turning.
 #
-# Feed sources, same JSON shape either way:
-#   nothing set        -> the public unsplash.com feed (curated, no signup);
-#   UNSPLASH_ACCESS_KEY-> https://api.unsplash.com/photos?order_by=popular
-#                         (that is the real "top", and a free key unlocks it);
+# Feed sources search the same default terms: nature, animals and abstract.
+#   nothing set        -> the public unsplash.com search feed (no signup);
+#   UNSPLASH_ACCESS_KEY-> https://api.unsplash.com/search/photos
+#                         (the documented API search endpoint);
 #   UNSPLASH_FEED_URL  -> any of the above, or your own JSON.
 #
 # Knobs live in $APP_DIR/unsplash.conf (see unsplash.conf.example) or in the
-# environment: INTERVAL, PANEL, PER_PAGE, KEEP, MAX_RUN, ERROR_WAIT, TOUCH_DEV,
-# IMAGE_PARAMS, FBINK_IMAGE_ARGS, UNSPLASH_ACCESS_KEY.
+# environment: UNSPLASH_QUERY, INTERVAL, PANEL, PER_PAGE, KEEP, MAX_RUN,
+# ERROR_WAIT, TOUCH_DEV, IMAGE_PARAMS, FBINK_IMAGE_ARGS, UNSPLASH_ACCESS_KEY.
 
 APP_DIR="${APP_DIR:-/mnt/us/documents/eink-wallpaper}"
 PANEL="${PANEL:-600x800}"
@@ -36,6 +36,7 @@ KEEP="${KEEP:-40}"
 MAX_RUN="${MAX_RUN:-0}"
 ERROR_WAIT="${ERROR_WAIT:-120}"
 UNSPLASH_ACCESS_KEY="${UNSPLASH_ACCESS_KEY:-}"
+UNSPLASH_QUERY="${UNSPLASH_QUERY:-nature animals abstract}"
 UNSPLASH_FEED_URL="${UNSPLASH_FEED_URL:-}"
 TOUCH_DEV="${TOUCH_DEV:-}"
 # imgix rendering for the panel. fbink's image decoder is stb_image, which
@@ -120,13 +121,21 @@ fetch() {
     return 127
 }
 
+query_param() {
+    printf '%s' "$UNSPLASH_QUERY" \
+        | sed 's/ /%20/g; s/,/%2C/g; s/&/%26/g'
+}
+
 feed_url() {
+    QUERY=$(query_param)
     if [ -n "$UNSPLASH_FEED_URL" ]; then
         printf '%s\n' "$UNSPLASH_FEED_URL"
     elif [ -n "$UNSPLASH_ACCESS_KEY" ]; then
-        printf 'https://api.unsplash.com/photos?order_by=popular&per_page=%s\n' "$PER_PAGE"
+        printf 'https://api.unsplash.com/search/photos?query=%s&per_page=%s\n' \
+            "$QUERY" "$PER_PAGE"
     else
-        printf 'https://unsplash.com/napi/photos?per_page=%s\n' "$PER_PAGE"
+        printf 'https://unsplash.com/napi/search/photos?query=%s&per_page=%s&page=1\n' \
+            "$QUERY" "$PER_PAGE"
     fi
 }
 
@@ -298,9 +307,9 @@ rm -f "$FLAG"
 mkdir -p "$APP_DIR" "$CACHE"
 
 if [ -n "$UNSPLASH_ACCESS_KEY" ]; then
-    log "start panel=$PANEL interval=${INTERVAL}s per_page=$PER_PAGE feed=api"
+    log "start panel=$PANEL interval=${INTERVAL}s per_page=$PER_PAGE query=$UNSPLASH_QUERY feed=api"
 else
-    log "start panel=$PANEL interval=${INTERVAL}s per_page=$PER_PAGE feed=public"
+    log "start panel=$PANEL interval=${INTERVAL}s per_page=$PER_PAGE query=$UNSPLASH_QUERY feed=public"
 fi
 
 say "UNSPLASH

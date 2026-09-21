@@ -1,8 +1,11 @@
 # Copy to /mnt/us/documents/eink-wallpaper/unsplash.conf.
 # The script sources this file as POSIX sh; quote values containing &, ?, or spaces.
 
-# Official Unsplash API key. With this set, order_by=popular is used.
-# Leave empty for the public, keyless editorial feed.
+# Default search terms. Change this to customize the wallpaper feed.
+UNSPLASH_QUERY='nature animals abstract'
+
+# Official Unsplash API key. With this set, documented search is used.
+# Leave empty for the public, keyless search feed.
 UNSPLASH_ACCESS_KEY=
 
 # Seconds per image. The requested default is one minute.

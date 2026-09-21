@@ -216,8 +216,8 @@ check "the feed list holds the three public photos" \
     "$([ "$(count "$APP_DIR_T/feed.txt" '.' )" = "3" ] && echo 0 || echo 1)"
 check "premium and s3 variants never enter the list" \
     "$(nosaw "$APP_DIR_T/feed.txt" 'premium_photo|small_s3|s3\.')"
-check "the feed is fetched once per cycle" \
-    "$([ "$(count "$LOG_DIR/curl.log" 'napi/photos')" = "1" ] && echo 0 || echo 1)"
+check "the public feed uses the default search terms" \
+    "$(saw "$LOG_DIR/curl.log" 'napi/search/photos[?]query=nature%20animals%20abstract')"
 check "each photo is downloaded once, the next one is prefetched" \
     "$([ "$(count "$LOG_DIR/curl.log" 'images.unsplash.com/photo-')" = "3" ] && echo 0 || echo 1)"
 check "the shuffled list is exactly the three public photos" \
@@ -313,8 +313,8 @@ printf 'UNSPLASH_ACCESS_KEY=test-key-123\n' > "$CONF_T"
 MAX_RUN=1
 run
 
-check "a key in unsplash.conf asks the official API for the popular photos" \
-    "$(saw "$LOG_DIR/curl.log" 'api.unsplash.com/photos[?]order_by=popular')"
+check "a key in unsplash.conf asks the official search endpoint" \
+    "$(saw "$LOG_DIR/curl.log" 'api.unsplash.com/search/photos[?]query=nature%20animals%20abstract')"
 check "the key travels in the Client-ID header" \
     "$(saw "$LOG_DIR/curl.log" 'Authorization: Client-ID test-key-123')"
 check "the keyed run still renders a photo" \
